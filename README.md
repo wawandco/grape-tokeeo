@@ -17,5 +17,8 @@ Or install it yourself as:
 $ gem install grape-tokeeo
 ```
 
+## Usage
+
+
 
 
