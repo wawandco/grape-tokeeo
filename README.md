@@ -36,7 +36,7 @@ And we don't want to expose :something publicly, grape-tokkeo helps us by allowi
 
 ```ruby
 class MyApi::API < Grape::API
-  ensure_token_in 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'
+  ensure_token is: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'
 
   get :something do
     {content: 'secret content'}
@@ -44,15 +44,15 @@ class MyApi::API < Grape::API
 end
 ```
 
-In case we call the API without passing X-Api-Token with the 'S0METHINGWEWANTTOS..' value, we will get a 401 error code on the response and our 'secret content' wont be returned to the client requesting.
+In case we call the API without passing *X-Api-Token* with the 'S0METHINGWEWANTTOS..' value, we will get a 401 error code on the response and our 'secret content' wont be returned to the client requesting.
 
 ### Token on model
 
-In case we want to ensure the token exists in a model we can use the following syntax for the *ensure_token_in* method:
+In case we want to ensure the token exists in a model we can use the following syntax for the *ensure_token* method:
 
 ```ruby
 class MyApi::API < Grape::API
-  ensure_token_in model: SecureTokenHolder, attribute: :token
+  ensure_token in: SecureTokenHolder, field: :token
 
   get :something do
     {content: 'secret content'}
@@ -68,7 +68,7 @@ There may be some cases where you would like to do the validation by yourself or
 
 ```ruby
 class MyApi::API < Grape::API
-  ensure_token_in do |token|
+  ensure_token with: do |token|
     SomeComplexOperationHolder.validate token
   end
 
@@ -79,4 +79,3 @@ end
 ```
 
 In this case if the result of the block is true request will bypass the token control.
-
