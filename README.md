@@ -72,7 +72,7 @@ There may be some cases where you would like to do the validation by yourself or
 
 ```ruby
 class MyApi::API < Grape::API
-  ensure_token with: do |token|
+  ensure_token_with do |token|
     SomeComplexOperationHolder.validate token
   end
 
