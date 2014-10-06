@@ -1,0 +1,14 @@
+language: ruby
+cache: bundler
+
+rvm:
+  - 2.1.2
+
+script: 'CODECLIMATE_REPO_TOKEN= bundle exec rspec'
+
+notifications:
+  email:
+    recipients:
+      - apagano@wawand.co
+    on_failure: change
+    on_success: never
