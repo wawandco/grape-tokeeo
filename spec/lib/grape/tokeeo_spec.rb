@@ -22,6 +22,11 @@ describe Grape::Tokeeo do
     expect(last_response.status).to eq(200)
   end
 
+  it "should not affect external content" do
+    get :unsecured_endpoint
+    expect(JSON.parse(last_response.body)['content']).to eq('public content')
+  end
+
 
 
 end
