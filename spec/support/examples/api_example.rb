@@ -17,6 +17,15 @@ class APIExample < Grape::API
   end
 
 
+  resource :block do
+    ensure_token_with do |token|
+      token.try(:start_with?, 'A')
+    end
+
+    get :something do
+      {content: 'secret content'}
+    end
+  end
   # ensure_token in: User, field: :auth_token
   # ensure_token with: do |token|
   #
