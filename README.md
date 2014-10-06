@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/wawandco/grape-tokeeo.svg?branch=master)](https://travis-ci.org/wawandco/grape-tokeeo)
 [![Code Climate](https://codeclimate.com/github/wawandco/grape-tokeeo/badges/gpa.svg)](https://codeclimate.com/github/wawandco/grape-tokeeo)
 [![Test Coverage](https://codeclimate.com/github/wawandco/grape-tokeeo/badges/coverage.svg)](https://codeclimate.com/github/wawandco/grape-tokeeo)
 
