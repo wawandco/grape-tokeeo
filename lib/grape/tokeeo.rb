@@ -7,8 +7,10 @@ module Grape
 
     class << self
       def ensure_token( options={} )
-        Grape::Tokeeo.preshared(options, self) if options[:is].present?
+        Grape::Tokeeo.build_preshared_token_security(options, self) if options[:is].present?
+        Grape::Tokeeo.build_model_token_security(options, self) if options[:in].present?
       end
+
       def ensure_token_with(&block)
         Grape::Tokeeo.secure_with( self, &block)
       end
@@ -17,13 +19,27 @@ module Grape
 
   module Tokeeo
     class << self
-      def preshared(options, api_instance)
+      def build_preshared_token_security(options, api_instance)
         api_instance.before do
           token = env['X-Api-Token']
           preshared_token = options[:is]
 
           error!('Token was not passed', 401) unless token.present?
           error!('Invalid token', 401) unless token == preshared_token
+        end
+      end
+
+      def build_model_token_security(options, api_instance)
+        clazz = options[:in]
+        field = options[:field]
+
+        raise Error("#{clazz} is not an ActiveRecord::Base subclass") unless clazz < ActiveRecord::Base
+
+        api_instance.before do
+          token = env['X-Api-Token']
+          found = clazz.find_by("#{field.to_s}" => token )
+          error!('Token was not passed', 401) unless token.present?
+          error!('Invalid Token', 401) unless found.present?
         end
       end
 

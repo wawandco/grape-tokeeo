@@ -16,11 +16,18 @@ class APIExample < Grape::API
     {content: "public content"}
   end
 
-
   resource :block do
     ensure_token_with do |token|
       token.try(:start_with?, 'A')
     end
+
+    get :something do
+      {content: 'secret content'}
+    end
+  end
+
+  resource :model do
+    ensure_token in: User, field: :token
 
     get :something do
       {content: 'secret content'}
