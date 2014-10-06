@@ -29,7 +29,6 @@ RSpec.configure do |config|
   # methods or matchers
   require 'rspec/expectations'
   config.include RSpec::Matchers
-
   config.include Rack::Test::Methods
 
   # == Mock Framework
