@@ -7,15 +7,15 @@ describe Grape::Tokeeo do
     APIExample.new
   end
 
-  ['preshared', 'block'].each do |feature|
+  ['preshared', 'block', 'model'].each do |feature|
     context "##{feature} token" do
       it "should return 401 if X-Api-Token is not passed" do
-        get 'block/something'
+        get "#{feature}/something"
         expect(last_response.status).to eq(401)
       end
 
       it "should return 401 if X-Api-Token is not the same as the value user has defined" do
-        get 'preshared/something', nil, { 'X-Api-Token' => 'not right' }
+        get "#{feature}/something", nil, { 'X-Api-Token' => 'not right' }
         expect(last_response.status).to eq(401)
       end
 
@@ -36,6 +36,14 @@ describe Grape::Tokeeo do
   context "valid block one"do
     it "should return 200 if X-Api-Token is the same as the value user has defined" do
       get 'block/something', {}, {"X-Api-Token" => 'AS0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
+      expect(last_response.status).to eq(200)
+    end
+  end
+
+  context "valid model one"do
+    it "should return 200 if X-Api-Token is the same as the value user has defined" do
+      create(:user, token: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT')
+      get 'model/something', {}, {"X-Api-Token" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
       expect(last_response.status).to eq(200)
     end
   end
