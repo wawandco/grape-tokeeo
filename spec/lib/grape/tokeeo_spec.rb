@@ -55,6 +55,13 @@ describe Grape::Tokeeo do
     end
   end
 
+  context "custom_error_message" do
+    it "should return current message if X-Api-Token is not user-defined" do
+      get 'preshared_with_message/something', {}, {"X-Api-Token" => 'AAB'}
+      expect(JSON.parse(last_response.body)['error']).to eq("Invalid token passed buddy")
+    end
+  end
+
 
 
 end

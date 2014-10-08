@@ -4,6 +4,14 @@ require "grape/tokeeo"
 class APIExample < Grape::API
   format :json
 
+  resource :preshared_with_message do
+    ensure_token is: "AAA", invalid_message: 'Invalid token passed buddy'
+
+    get :something do
+      {content: 'secret content'}
+    end
+  end
+
   resource :preshared do
     ensure_token is: "S0METHINGWEWANTTOSHAREONLYWITHCLIENT"
 
