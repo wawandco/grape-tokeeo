@@ -25,7 +25,9 @@ module Grape
           preshared_token = options[:is]
 
           error!('Token was not passed', 401) unless token.present?
-          error!('Invalid token', 401) unless token == preshared_token
+
+          verification_passed = preshared_token.is_a?(Array) ?  preshared_token.include?(token) : token == preshared_token
+          error!('Invalid token', 401) unless verification_passed
         end
       end
 
