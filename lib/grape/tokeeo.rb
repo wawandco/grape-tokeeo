@@ -18,16 +18,24 @@ module Grape
   end
 
   module Tokeeo
+    DEFAULT_INVALID_MESSAGE = 'Invalid Token'
+    DEFAULT_MISSING_MESSAGE = 'Token was not passed'
+
     class << self
+
+      def message_for_invalid_token( options={} )
+        invalid_message_to_use = options[:invalid_message]
+        invalid_message_to_use ||= DEFAULT_INVALID_MESSAGE
+      end
+
       def build_preshared_token_security(options, api_instance)
         api_instance.before do
           token = env['X-Api-Token']
           preshared_token = options[:is]
 
-          error!('Token was not passed', 401) unless token.present?
-
+          error!(DEFAULT_MISSING_MESSAGE, 401) unless token.present?
           verification_passed = preshared_token.is_a?(Array) ?  preshared_token.include?(token) : token == preshared_token
-          error!('Invalid token', 401) unless verification_passed
+          error!( Grape::Tokeeo.message_for_invalid_token(options) , 401) unless verification_passed
         end
       end
 
@@ -40,8 +48,9 @@ module Grape
         api_instance.before do
           token = env['X-Api-Token']
           found = clazz.find_by("#{field.to_s}" => token )
-          error!('Token was not passed', 401) unless token.present?
-          error!('Invalid Token', 401) unless found.present?
+
+          error!(DEFAULT_MISSING_MESSAGE, 401) unless token.present?
+          error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless found.present?
         end
       end
 
@@ -49,8 +58,8 @@ module Grape
         api_instance.before do
           token = env['X-Api-Token']
 
-          error!('Token was not passed', 401) unless token.present?
-          error!('Invalid Token', 401) unless yield(token)
+          error!( DEFAULT_MISSING_MESSAGE, 401) unless token.present?
+          error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless yield(token)
         end
       end
     end
