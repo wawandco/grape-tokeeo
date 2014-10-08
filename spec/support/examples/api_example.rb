@@ -12,6 +12,14 @@ class APIExample < Grape::API
     end
   end
 
+  resource :preshared_with_list do
+    ensure_token is: ["S0METHINGWEWANTTOSHAREONLYWITHCLIENT", "OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT"]
+
+    get :something do
+      {content: 'secret content'}
+    end
+  end
+
   get :unsecured_endpoint do
     {content: "public content"}
   end

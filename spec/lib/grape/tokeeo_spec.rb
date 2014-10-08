@@ -7,7 +7,7 @@ describe Grape::Tokeeo do
     APIExample.new
   end
 
-  ['preshared', 'block', 'model'].each do |feature|
+  ['preshared', 'preshared_with_list', 'block', 'model'].each do |feature|
     context "##{feature} token" do
       it "should return 401 if X-Api-Token is not passed" do
         get "#{feature}/something"
@@ -26,21 +26,28 @@ describe Grape::Tokeeo do
     end
   end
 
-  context "valid preshared one"do
+  context "valid preshared one" do
     it "should return 200 if X-Api-Token is the same as the value user has defined" do
-      get 'preshared/something', {}, {"X-Api-Token" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
+      get 'preshared/something', {}, {"X-Api-Token" => "S0METHINGWEWANTTOSHAREONLYWITHCLIENT"}
       expect(last_response.status).to eq(200)
     end
   end
 
-  context "valid block one"do
+  context "valid preshared with list one" do
+    it "should return 200 if X-Api-Token exist in the list that user has defined" do
+      get 'preshared_with_list/something', {}, {"X-Api-Token" => "OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT"}
+      expect(last_response.status).to eq(200)
+    end
+  end
+
+  context "valid block one" do
     it "should return 200 if X-Api-Token is the same as the value user has defined" do
       get 'block/something', {}, {"X-Api-Token" => 'AS0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
       expect(last_response.status).to eq(200)
     end
   end
 
-  context "valid model one"do
+  context "valid model one" do
     it "should return 200 if X-Api-Token is the same as the value user has defined" do
       create(:user, token: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT')
       get 'model/something', {}, {"X-Api-Token" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
