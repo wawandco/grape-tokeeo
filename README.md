@@ -50,6 +50,18 @@ end
 
 In case we call the API without passing *X-Api-Token* with the 'S0METHINGWEWANTTOS..' value, we will get a 401 error code on the response and our 'secret content' wont be returned to the client requesting.
 
+this options also accepts a list of tokens inside the /is:/ option. like this.
+```ruby
+class MyApi::API < Grape::API
+  ensure_token is: ['TOKENA','TOKENB']
+
+  get :something do
+    {content: 'secret content'}
+  end
+end
+```
+
+
 ### Token on model
 
 In case we want to ensure the token exists in a model we can use the following syntax for the *ensure_token* method:
@@ -83,3 +95,17 @@ end
 ```
 
 In this case if the result of the block is true request will bypass the token control.
+
+### Custom validation error message
+
+You can also define your custom validation error message by passing the /invalid_message/ option to the method, as the following code:
+
+```ruby
+class MyApi::API < Grape::API
+  ensure_token is: ['TOKENA','TOKENB'], invalid_message: "Look 'ma its working"
+
+  get :something do
+    {content: 'secret content'}
+  end
+end
+```
