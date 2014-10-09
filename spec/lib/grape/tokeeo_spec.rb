@@ -7,10 +7,15 @@ describe Grape::Tokeeo do
     APIExample.new
   end
 
-  ['preshared', 'preshared_with_list', 'block', 'model'].each do |feature|
+  ['preshared', 'preshared_header', 'preshared_with_list', 'block', 'model'].each do |feature|
     context "##{feature} token" do
       it "should return 401 if X-Api-Token is not passed" do
         get "#{feature}/something"
+        expect(last_response.status).to eq(401)
+      end
+
+      it "should return 401 if header name is not the same as the value user has defined" do
+        get "#{feature}/something", nil, { 'Not-Header-Name' => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT' }
         expect(last_response.status).to eq(401)
       end
 
@@ -28,20 +33,20 @@ describe Grape::Tokeeo do
 
   context "valid preshared one" do
     it "should return 200 if X-Api-Token is the same as the value user has defined" do
-      get 'preshared/something', {}, {"X-Api-Token" => "S0METHINGWEWANTTOSHAREONLYWITHCLIENT"}
+      get 'preshared/something', {}, {'X-Api-Token' => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
       expect(last_response.status).to eq(200)
     end
   end
 
   context "valid preshared with list one" do
-    it "should return 200 if X-Api-Token exist in the list that user has defined" do
-      get 'preshared_with_list/something', {}, {"X-Api-Token" => "OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT"}
+    it "should return 200 if X-My-Api-Header exist in the list that user has defined" do
+      get 'preshared_with_list/something', {}, {'X-Api-Token' => 'OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
       expect(last_response.status).to eq(200)
     end
   end
 
   context "valid block one" do
-    it "should return 200 if X-Api-Token is the same as the value user has defined" do
+    it "should return 200 if X-My-Api-Header is the same as the value user has defined" do
       get 'block/something', {}, {"X-Api-Token" => 'AS0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
       expect(last_response.status).to eq(200)
     end
@@ -62,6 +67,32 @@ describe Grape::Tokeeo do
     end
   end
 
+  context "preshared header one" do
+    it "should return 200 if X-My-Api-Header is the same as the value user has defined" do
+      get 'preshared_header/something', {}, {"X-My-Api-Header" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
+      expect(last_response.status).to eq(200)
+    end
+  end
 
+  context "valid preshared with list one" do
+    it "should return 200 if X-My-Api-Header exist in the list that user has defined" do
+      get 'preshared_header_with_list/something', {}, {'X-My-Api-Header' => 'OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
+      expect(last_response.status).to eq(200)
+    end
+  end
 
+  context "valid model one" do
+    it "should return 200 if X-My-Api-Header is the same as the value user has defined" do
+      create(:user, token: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT')
+      get 'model_header/something', {}, {"X-My-Api-Header" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
+      expect(last_response.status).to eq(200)
+    end
+  end
+
+  context "valid block one" do
+    it "should return 200 if X-My-Api-Header is the same as the value user has defined" do
+      get 'block_header/something', {}, {"X-My-Api-Header" => 'AS0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
+      expect(last_response.status).to eq(200)
+    end
+  end
 end
