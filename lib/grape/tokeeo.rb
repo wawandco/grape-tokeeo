@@ -20,7 +20,6 @@ module Grape
   module Tokeeo
     DEFAULT_INVALID_MESSAGE = 'Invalid Token'
     DEFAULT_MISSING_MESSAGE = 'Token was not passed'
-    INVALID_HEADER = 'Invalid Header'
     DEFAULT_HEADER = 'X-Api-Token'
 
 
