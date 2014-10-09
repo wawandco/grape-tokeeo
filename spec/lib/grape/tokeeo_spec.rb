@@ -39,7 +39,7 @@ describe Grape::Tokeeo do
   end
 
   context "valid preshared with list one" do
-    it "should return 200 if X-My-Api-Header exist in the list that user has defined" do
+    it "should return 200 if X-Api-Token exist in the list that user has defined" do
       get 'preshared_with_list/something', {}, {'X-Api-Token' => 'OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
       expect(last_response.status).to eq(200)
     end

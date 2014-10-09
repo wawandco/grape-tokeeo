@@ -22,7 +22,6 @@ module Grape
     DEFAULT_MISSING_MESSAGE = 'Token was not passed'
     DEFAULT_HEADER = 'X-Api-Token'
 
-
     class << self
 
       def message_for_invalid_token( options={} )
