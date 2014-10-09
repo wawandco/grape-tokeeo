@@ -20,8 +20,24 @@ class APIExample < Grape::API
     end
   end
 
+  resource :preshared_header do
+    ensure_token header: "X-My-Api-Header", is: "S0METHINGWEWANTTOSHAREONLYWITHCLIENT"
+
+    get :something do
+      {content: 'secret content'}
+    end
+  end
+
   resource :preshared_with_list do
     ensure_token is: ["S0METHINGWEWANTTOSHAREONLYWITHCLIENT", "OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT"]
+
+    get :something do
+      {content: 'secret content'}
+    end
+  end
+
+  resource :preshared_header_with_list do
+    ensure_token header: "X-My-Api-Header", is: ["S0METHINGWEWANTTOSHAREONLYWITHCLIENT", "OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT"]
 
     get :something do
       {content: 'secret content'}
@@ -42,8 +58,26 @@ class APIExample < Grape::API
     end
   end
 
+  resource :block_header do
+    ensure_token_with header: "X-My-Api-Header" do |token|
+      token.try(:start_with?, 'A')
+    end
+
+    get :something do
+      {content: 'secret content'}
+    end
+  end
+
   resource :model do
     ensure_token in: User, field: :token
+
+    get :something do
+      {content: 'secret content'}
+    end
+  end
+
+  resource :model_header do
+    ensure_token header: "X-My-Api-Header", in: User, field: :token
 
     get :something do
       {content: 'secret content'}
