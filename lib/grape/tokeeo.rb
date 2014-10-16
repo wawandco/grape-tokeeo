@@ -6,12 +6,12 @@ module Grape
     include Grape::Tokeeo
 
     class << self
-      def ensure_token( options={} )
+      def validate_token( options={} )
         Grape::Tokeeo.build_preshared_token_security(options, self) if options[:is].present?
         Grape::Tokeeo.build_model_token_security(options, self) if options[:in].present?
       end
 
-      def ensure_token_with(options={}, &block)
+      def validate_token_with(options={}, &block)
         Grape::Tokeeo.secure_with( self, options, &block)
       end
     end

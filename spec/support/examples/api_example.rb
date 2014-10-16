@@ -5,7 +5,7 @@ class APIExample < Grape::API
   format :json
 
   resource :preshared_with_message do
-    ensure_token is: "AAA", invalid_message: 'Invalid token passed buddy'
+    validate_token is: "AAA", invalid_message: 'Invalid token passed buddy'
 
     get :something do
       {content: 'secret content'}
@@ -13,7 +13,7 @@ class APIExample < Grape::API
   end
 
   resource :preshared do
-    ensure_token is: "S0METHINGWEWANTTOSHAREONLYWITHCLIENT"
+    validate_token is: "S0METHINGWEWANTTOSHAREONLYWITHCLIENT"
 
     get :something do
       {content: 'secret content'}
@@ -21,7 +21,7 @@ class APIExample < Grape::API
   end
 
   resource :preshared_header do
-    ensure_token header: "X-My-Api-Header", is: "S0METHINGWEWANTTOSHAREONLYWITHCLIENT"
+    validate_token header: "X-My-Api-Header", is: "S0METHINGWEWANTTOSHAREONLYWITHCLIENT"
 
     get :something do
       {content: 'secret content'}
@@ -29,7 +29,7 @@ class APIExample < Grape::API
   end
 
   resource :preshared_with_list do
-    ensure_token is: ["S0METHINGWEWANTTOSHAREONLYWITHCLIENT", "OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT"]
+    validate_token is: ["S0METHINGWEWANTTOSHAREONLYWITHCLIENT", "OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT"]
 
     get :something do
       {content: 'secret content'}
@@ -37,7 +37,7 @@ class APIExample < Grape::API
   end
 
   resource :preshared_header_with_list do
-    ensure_token header: "X-My-Api-Header", is: ["S0METHINGWEWANTTOSHAREONLYWITHCLIENT", "OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT"]
+    validate_token header: "X-My-Api-Header", is: ["S0METHINGWEWANTTOSHAREONLYWITHCLIENT", "OTHERS0METHINGWEWANTTOSHAREONLYWITHCLIENT"]
 
     get :something do
       {content: 'secret content'}
@@ -49,7 +49,7 @@ class APIExample < Grape::API
   end
 
   resource :block do
-    ensure_token_with do |token|
+    validate_token_with do |token|
       token.try(:start_with?, 'A')
     end
 
@@ -59,7 +59,7 @@ class APIExample < Grape::API
   end
 
   resource :block_header do
-    ensure_token_with header: "X-My-Api-Header" do |token|
+    validate_token_with header: "X-My-Api-Header" do |token|
       token.try(:start_with?, 'A')
     end
 
@@ -69,7 +69,7 @@ class APIExample < Grape::API
   end
 
   resource :model do
-    ensure_token in: User, field: :token
+    validate_token in: User, field: :token
 
     get :something do
       {content: 'secret content'}
@@ -77,14 +77,14 @@ class APIExample < Grape::API
   end
 
   resource :model_header do
-    ensure_token header: "X-My-Api-Header", in: User, field: :token
+    validate_token header: "X-My-Api-Header", in: User, field: :token
 
     get :something do
       {content: 'secret content'}
     end
   end
-  # ensure_token in: User, field: :auth_token
-  # ensure_token with: do |token|
+  # validate_token in: User, field: :auth_token
+  # validate_token with: do |token|
   #
   # end
 

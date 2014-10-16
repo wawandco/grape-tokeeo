@@ -40,7 +40,7 @@ And we don't want to expose :something publicly, grape-tokkeo helps us by allowi
 
 ```ruby
 class MyApi::API < Grape::API
-  ensure_token is: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'
+  validate_token is: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'
 
   get :something do
     {content: 'secret content'}
@@ -53,7 +53,7 @@ In case we call the API without passing *X-Api-Token* with the 'S0METHINGWEWANTT
 this options also accepts a list of tokens inside the /is:/ option. like this.
 ```ruby
 class MyApi::API < Grape::API
-  ensure_token is: ['TOKENA','TOKENB']
+  validate_token is: ['TOKENA','TOKENB']
 
   get :something do
     {content: 'secret content'}
@@ -64,11 +64,11 @@ end
 
 ### Token on model
 
-In case we want to ensure the token exists in a model we can use the following syntax for the *ensure_token* method:
+In case we want to ensure the token exists in a model we can use the following syntax for the *validate_token* method:
 
 ```ruby
 class MyApi::API < Grape::API
-  ensure_token in: SecureTokenHolder, field: :token
+  validate_token in: SecureTokenHolder, field: :token
 
   get :something do
     {content: 'secret content'}
@@ -80,11 +80,11 @@ Again this should ensure the token exist by looking on the SecureTokenHolder mod
 
 ### Token validated against a block passed
 
-There may be some cases where you would like to do the validation by yourself or the validation logic is not simple as verifying against the model attribute, in that case we could pass a block to the *ensure_token_in* method like:
+There may be some cases where you would like to do the validation by yourself or the validation logic is not simple as verifying against the model attribute, in that case we could pass a block to the *validate_token_in* method like:
 
 ```ruby
 class MyApi::API < Grape::API
-  ensure_token_with do |token|
+  validate_token_with do |token|
     SomeComplexOperationHolder.validate token
   end
 
@@ -102,7 +102,7 @@ You can also define your custom validation error message by passing the /invalid
 
 ```ruby
 class MyApi::API < Grape::API
-  ensure_token is: ['TOKENA','TOKENB'], invalid_message: "Look 'ma its working"
+  validate_token is: ['TOKENA','TOKENB'], invalid_message: "Look 'ma its working"
 
   get :something do
     {content: 'secret content'}
