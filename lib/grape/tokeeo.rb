@@ -39,14 +39,16 @@ module Grape
         token ||= request.env[key]
       end
 
+      def header_token( options, request )
+        header_key = Grape::Tokeeo.header_to_verify(options)
+        token = Grape::Tokeeo.header_for( header_key, request )
+      end
+
       def build_preshared_token_security(options, api_instance)
-        api_instance.before do
-          header_key = Grape::Tokeeo.header_to_verify(options)
-          token = Grape::Tokeeo.header_for( header_key, request )
-          preshared_token = options[:is]
-
+        api_instance.before do          
+          token = Grape::Tokeeo.header_token(options, request)
           error!(DEFAULT_MISSING_MESSAGE, 401) unless token.present?
-
+          preshared_token = options[:is]
           verification_passed = preshared_token.is_a?(Array) ?  preshared_token.include?(token) : token == preshared_token
           error!( Grape::Tokeeo.message_for_invalid_token(options) , 401) unless verification_passed
         end
@@ -59,8 +61,7 @@ module Grape
         raise Error("#{clazz} is not an ActiveRecord::Base subclass") unless clazz < ActiveRecord::Base
 
         api_instance.before do
-          header = Grape::Tokeeo.header_to_verify(options)
-          token = env[header]
+          token = Grape::Tokeeo.header_token(options, request)
           found = clazz.find_by("#{field.to_s}" => token )
 
           error!(DEFAULT_MISSING_MESSAGE, 401) unless token.present?
@@ -70,10 +71,8 @@ module Grape
 
       def secure_with(api_instance, options, &block )
         api_instance.before do
-          header = Grape::Tokeeo.header_to_verify(options)
-          token = env[header]
-
-          error!( DEFAULT_MISSING_MESSAGE, 401) unless token.present?
+          token = Grape::Tokeeo.header_token(options, request)
+          error!( DEFAULT_MISSING_MESSAGE, 401) unless 
           error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless yield(token)
         end
       end
