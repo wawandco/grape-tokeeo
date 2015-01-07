@@ -37,7 +37,9 @@ module Grape
       def build_preshared_token_security(options, api_instance)
         api_instance.before do
           header = Grape::Tokeeo.header_to_verify(options)
-          token = env[header]
+          token = request.headers[header]
+          token ||= request.env[header]
+          
           preshared_token = options[:is]
 
           error!(DEFAULT_MISSING_MESSAGE, 401) unless token.present?
