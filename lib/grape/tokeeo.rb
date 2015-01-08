@@ -45,7 +45,7 @@ module Grape
       end
 
       def build_preshared_token_security(options, api_instance)
-        api_instance.before do          
+        api_instance.before do
           token = Grape::Tokeeo.header_token(options, request)
           error!(DEFAULT_MISSING_MESSAGE, 401) unless token.present?
           preshared_token = options[:is]
@@ -72,7 +72,7 @@ module Grape
       def secure_with(api_instance, options, &block )
         api_instance.before do
           token = Grape::Tokeeo.header_token(options, request)
-          error!( DEFAULT_MISSING_MESSAGE, 401) unless 
+          error!( DEFAULT_MISSING_MESSAGE, 401) unless token.present?
           error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless yield(token)
         end
       end
