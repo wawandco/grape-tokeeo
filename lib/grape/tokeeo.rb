@@ -29,6 +29,11 @@ module Grape
         invalid_message_to_use ||= DEFAULT_INVALID_MESSAGE
       end
 
+      def message_for_missing_token( options= {})
+        missing_message_to_use = options[:missing_message]
+        missing_message_to_use ||= DEFAULT_MISSING_MESSAGE
+      end
+
       def header_to_verify( options={} )
         header_to_use = options[:header]
         header_to_use ||= DEFAULT_HEADER
@@ -47,7 +52,7 @@ module Grape
       def build_preshared_token_security(options, api_instance)
         api_instance.before do
           token = Grape::Tokeeo.header_token(options, request)
-          error!(DEFAULT_MISSING_MESSAGE, 401) unless token.present?
+          error!(Grape::Tokeeo.message_for_missing_token(options), 401)  unless token.present?
           preshared_token = options[:is]
           verification_passed = preshared_token.is_a?(Array) ?  preshared_token.include?(token) : token == preshared_token
           error!( Grape::Tokeeo.message_for_invalid_token(options) , 401) unless verification_passed
@@ -63,8 +68,7 @@ module Grape
         api_instance.before do
           token = Grape::Tokeeo.header_token(options, request)
           found = clazz.find_by("#{field.to_s}" => token )
-
-          error!(DEFAULT_MISSING_MESSAGE, 401) unless token.present?
+          error!( Grape::Tokeeo.message_for_missing_token(options), 401) unless token.present?
           error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless found.present?
         end
       end
@@ -72,7 +76,7 @@ module Grape
       def secure_with(api_instance, options, &block )
         api_instance.before do
           token = Grape::Tokeeo.header_token(options, request)
-          error!( DEFAULT_MISSING_MESSAGE, 401) unless token.present?
+          error!( Grape::Tokeeo.message_for_missing_token(options), 401) unless token.present?
           error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless yield(token)
         end
       end
