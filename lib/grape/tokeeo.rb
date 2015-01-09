@@ -6,13 +6,23 @@ module Grape
     include Grape::Tokeeo
 
     class << self
-      def validate_token( options={} )
+      def ensure_token(options={})
         Grape::Tokeeo.build_preshared_token_security(options, self) if options[:is].present?
         Grape::Tokeeo.build_model_token_security(options, self) if options[:in].present?
       end
 
-      def validate_token_with(options={}, &block)
+      def ensure_token_with(options={}, &block)
         Grape::Tokeeo.secure_with( self, options, &block)
+      end
+
+      def validate_token(options={} )
+        warn "[DEPRECATED] 'validate_token' is deprecated, use 'ensure_token' instead"
+        ensure_token(options)
+      end
+
+      def validate_token_with(options={}, &block)
+        warn "[DEPRECATED] 'validate_token_with' is deprecated, use 'ensure_token_with' instead"
+        ensure_token_with(options, &block)
       end
     end
   end
