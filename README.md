@@ -109,3 +109,17 @@ class MyApi::API < Grape::API
   end
 end
 ```
+
+### Custom missing token message
+
+By default 'Token was not passed' message is defined when API token is missing in the request. You can customize this message by passing the *missing_message* option to the method:
+
+```ruby
+class MyApi::API < Grape::API
+  validate_token is: 'TOKENA', missing_message: 'API token is missing!'
+
+  get :something do
+   {content: 'secret content'}
+  end
+end
+```

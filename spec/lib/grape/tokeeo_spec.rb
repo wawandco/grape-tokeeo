@@ -98,7 +98,7 @@ describe Grape::Tokeeo do
 
   context "custom token is missing message" do
     it "should return token is missing message if X-Api-Token is not passed" do
-      get 'missing_token/something'
+      get 'missing_token_message/something'
       expect(JSON.parse(last_response.body)['error']).to eq('API token is missing')
     end
   end
