@@ -84,7 +84,7 @@ class APIExample < Grape::API
     end
   end
 
-  resource :missing_token do
+  resource :missing_token_message do
     validate_token is: 'AAA', missing_message: 'API token is missing'
     get :something do
       {content: 'secret content'}
