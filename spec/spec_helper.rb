@@ -8,6 +8,7 @@ require 'active_record'
 require 'database_cleaner'
 require 'factory_girl'
 require "rack/test"
+require "orm_adapter"
 
 ENV["RAILS_ENV"] = "test"
 

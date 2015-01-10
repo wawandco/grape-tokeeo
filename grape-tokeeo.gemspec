@@ -31,4 +31,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "grape", '~> 0.9'
   spec.add_runtime_dependency "activerecord", '~> 4'
+  spec.add_runtime_dependency "orm_adapter", '~> 0.5.0'
 end
