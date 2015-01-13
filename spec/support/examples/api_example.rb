@@ -76,6 +76,14 @@ class APIExample < Grape::API
     end
   end
 
+  resource :model_data_mapper do
+    validate_token in: UserDataMapper, field: :token
+
+    get :something do
+      {content: 'secret content'}
+    end
+  end
+
   resource :model_header do
     validate_token header: "X-My-Api-Header", in: User, field: :token
 
