@@ -7,7 +7,7 @@ describe Grape::Tokeeo do
     APIExample.new
   end
 
-  ['preshared', 'preshared_header', 'preshared_with_list', 'block', 'model'].each do |feature|
+  ['preshared', 'preshared_header', 'preshared_with_list', 'block', 'model_active_record'].each do |feature|
     context "##{feature} token" do
       it "should return 401 if X-Api-Token is not passed" do
         get "#{feature}/something"
@@ -52,19 +52,18 @@ describe Grape::Tokeeo do
     end
   end
 
-  context "valid model one using activerecord" do
-    it "should return 200 if X-Api-Token is the same as the value user has defined" do
-      create(:user, token: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT')
-      get 'model/something', {}, {"X-Api-Token" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
-      expect(last_response.status).to eq(200)
-    end
-  end
+  {
+   'model_active_record' => :user_active_record,
+   'model_data_mapper'   => :user_data_mapper,
+   'model_mongo_mapper'  => :user_mongo_mapper
+   }.each do |resource, factory|
 
-  context "valid model one using data_mapper" do
-    it "should return 200 if X-Api-Token is the same as the value user has defined" do
-      create(:user_data_mapper, token: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT')
-      get 'model_data_mapper/something', {}, {"X-Api-Token" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
-      expect(last_response.status).to eq(200)
+    context "valid model one using #{resource}" do
+      it "should return 200 if X-Api-Token is the same as the value user has defined" do
+        create(factory, token: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT')
+        get "#{resource}/something", {}, {"X-Api-Token" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
+        expect(last_response.status).to eq(200)
+      end
     end
   end
 
@@ -91,7 +90,7 @@ describe Grape::Tokeeo do
 
   context "valid model one" do
     it "should return 200 if X-My-Api-Header is the same as the value user has defined" do
-      create(:user, token: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT')
+      create(:user_active_record, token: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT')
       get 'model_header/something', {}, {"X-My-Api-Header" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
       expect(last_response.status).to eq(200)
     end

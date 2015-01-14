@@ -68,19 +68,17 @@ class APIExample < Grape::API
     end
   end
 
-  resource :model do
-    validate_token in: User, field: :token
+  {:model_active_record => User,
+   :model_data_mapper   => UserDataMapper,
+   :model_mongo_mapper  => UserMongoMapper
+  }.each do |resource_name, model|
 
-    get :something do
-      {content: 'secret content'}
-    end
-  end
+    resource "#{resource_name}" do
+      validate_token in: model, field: :token
 
-  resource :model_data_mapper do
-    validate_token in: UserDataMapper, field: :token
-
-    get :something do
-      {content: 'secret content'}
+      get :something do
+        {content: 'secret content'}
+      end
     end
   end
 
@@ -98,10 +96,4 @@ class APIExample < Grape::API
       {content: 'secret content'}
     end
   end
-
-  # validate_token in: User, field: :auth_token
-  # validate_token with: do |token|
-  #
-  # end
-
 end

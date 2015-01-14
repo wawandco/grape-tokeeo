@@ -1,13 +1,18 @@
 FactoryGirl.define do
-  factory :user do |user|
-    sequence(:name) { |n| "name_#{n}" }
-    sequence(:email) { |n| "email_#{n}@test.com" }
-    token "#{SecureRandom.uuid}"
+
+  sequence(:name)  { |n| "name_#{n}" }
+  sequence(:email) { |n| "email_#{n}@test.com" }
+  sequence(:token)  { |n| "#{SecureRandom.uuid}"}
+
+  factory :user_active_record, class: User do |user|
+    name; email; token
   end
 
   factory :user_data_mapper, class: UserDataMapper do
-    sequence(:name)  { |n| "name_#{n}" }
-    sequence(:email) { |n| "email_#{n}"}
-    token "#{SecureRandom.uuid}"
+    name; email; token
+  end
+
+  factory :user_mongo_mapper, class: UserMongoMapper do
+    name; email; token
   end
 end
