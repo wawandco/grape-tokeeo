@@ -8,6 +8,9 @@ require 'active_record'
 require 'database_cleaner'
 require 'factory_girl'
 require "rack/test"
+require "dm-core"
+require "dm-migrations"
+require "orm_adapter"
 
 ENV["RAILS_ENV"] = "test"
 
@@ -21,10 +24,17 @@ RSpec.configure do |config|
 
   load File.dirname(__FILE__) + '/support/schema.rb'
 
+  # Initialize support with DataMapper
+  DataMapper.setup(:default, 'sqlite::memory:')
+
 
   Dir["#{File.dirname(__FILE__)}/support/models/*.rb"].each {|f| require f}
   Dir["#{File.dirname(__FILE__)}/factories/*.rb"].each {|f| require f }
   Dir["#{File.dirname(__FILE__)}/support/*.rb"].each{ |f| require f }
+
+  # Finalize models declaration for DataMapper
+  DataMapper.finalize
+  DataMapper.auto_migrate!
 
   # methods or matchers
   require 'rspec/expectations'

@@ -27,8 +27,13 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'database_cleaner', '~> 1.3'
   spec.add_development_dependency "rack-test", '~> 0'
   spec.add_development_dependency "codeclimate-test-reporter", '~> 0'
+  spec.add_development_dependency "dm-sqlite-adapter", '~> 1.2'
+  spec.add_development_dependency "dm-core", '~> 1.2'
+  spec.add_development_dependency "dm-migrations", '~> 1.2'
+
 
 
   spec.add_runtime_dependency "grape", '~> 0.9'
   spec.add_runtime_dependency "activerecord", '~> 4'
+  spec.add_runtime_dependency "orm_adapter", '~> 0.5.0'
 end

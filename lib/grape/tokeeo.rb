@@ -69,15 +69,24 @@ module Grape
         end
       end
 
+      def use_supported_orm? (clazz)
+        supported =   clazz < ActiveRecord::Base            if defined?(ActiveRecord::Base)
+        supported ||= clazz < DataMapper::Resource          if defined?(DataMapper::Resource)
+        supported ||= clazz < MongoMapper::Document         if defined?(MongoMapper::Document)
+        supported ||= clazz < MongoMapper::EmbeddedDocument if defined?(MongoMapper::EmbeddedDocument)
+        supported ||= clazz < Mongoid::Document             if defined?(Mongoid::Document)
+        supported
+      end
+
       def build_model_token_security(options, api_instance)
         clazz = options[:in]
         field = options[:field]
 
-        raise Error("#{clazz} is not an ActiveRecord::Base subclass") unless clazz < ActiveRecord::Base
+        raise Error("#{clazz} does not use any of the orm library supported") unless Grape::Tokeeo.use_supported_orm?(clazz)
 
         api_instance.before do
           token = Grape::Tokeeo.header_token(options, request)
-          found = clazz.find_by("#{field.to_s}" => token )
+          found = clazz.to_adapter.find_first("#{field.to_s}" => token)
           error!( Grape::Tokeeo.message_for_missing_token(options), 401) unless token.present?
           error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless found.present?
         end

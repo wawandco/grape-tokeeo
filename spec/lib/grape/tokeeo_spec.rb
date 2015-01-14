@@ -52,10 +52,18 @@ describe Grape::Tokeeo do
     end
   end
 
-  context "valid model one" do
+  context "valid model one using activerecord" do
     it "should return 200 if X-Api-Token is the same as the value user has defined" do
       create(:user, token: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT')
       get 'model/something', {}, {"X-Api-Token" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
+      expect(last_response.status).to eq(200)
+    end
+  end
+
+  context "valid model one using data_mapper" do
+    it "should return 200 if X-Api-Token is the same as the value user has defined" do
+      create(:user_data_mapper, token: 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT')
+      get 'model_data_mapper/something', {}, {"X-Api-Token" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
       expect(last_response.status).to eq(200)
     end
   end
