@@ -3,7 +3,10 @@ cache: bundler
 
 rvm:
   - 2.1.2
-  
+
+services:
+  - mongodb
+
 script: 'bundle exec rspec'
 
 notifications:

@@ -10,6 +10,7 @@ require 'factory_girl'
 require "rack/test"
 require "dm-core"
 require "dm-migrations"
+require "mongo_mapper"
 require "orm_adapter"
 
 ENV["RAILS_ENV"] = "test"
@@ -23,6 +24,12 @@ RSpec.configure do |config|
   )
 
   load File.dirname(__FILE__) + '/support/schema.rb'
+
+  # Initialize MongoMapper access.
+  MongoMapper.connection = Mongo::Connection.new('localhost', 27017)
+  MongoMapper.database = "test"
+
+  # Initialize Mongoid configuration.
 
   # Initialize support with DataMapper
   DataMapper.setup(:default, 'sqlite::memory:')

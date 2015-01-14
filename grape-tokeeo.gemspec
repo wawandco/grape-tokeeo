@@ -30,8 +30,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "dm-sqlite-adapter", '~> 1.2'
   spec.add_development_dependency "dm-core", '~> 1.2'
   spec.add_development_dependency "dm-migrations", '~> 1.2'
-
-
+  spec.add_development_dependency "bson_ext", '~> 1.0'
+  spec.add_development_dependency "mongo_mapper", '~> 0.11'
 
   spec.add_runtime_dependency "grape", '~> 0.9'
   spec.add_runtime_dependency "activerecord", '~> 4'
