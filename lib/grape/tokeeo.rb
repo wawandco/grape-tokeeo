@@ -59,13 +59,16 @@ module Grape
         token = Grape::Tokeeo.header_for( header_key, request )
       end
 
+      def verification_passed( options, token)
+        preshared_token = options[:is]
+        verification_passed = preshared_token.is_a?(Array) ?  preshared_token.include?(token) : token == preshared_token
+      end
+
       def build_preshared_token_security(options, api_instance)
         api_instance.before do
           token = Grape::Tokeeo.header_token(options, request)
           error!(Grape::Tokeeo.message_for_missing_token(options), 401)  unless token.present?
-          preshared_token = options[:is]
-          verification_passed = preshared_token.is_a?(Array) ?  preshared_token.include?(token) : token == preshared_token
-          error!( Grape::Tokeeo.message_for_invalid_token(options) , 401) unless verification_passed
+          error!( Grape::Tokeeo.message_for_invalid_token(options) , 401) unless verification_passed(options, token)
         end
       end
 
