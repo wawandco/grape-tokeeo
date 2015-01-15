@@ -59,16 +59,16 @@ module Grape
         token = Grape::Tokeeo.header_for( header_key, request )
       end
 
-      def verification_passed( options, token)
+      def verification_passed?( options, token)
         preshared_token = options[:is]
-        verification_passed = preshared_token.is_a?(Array) ?  preshared_token.include?(token) : token == preshared_token
+        preshared_token.is_a?(Array) ?  preshared_token.include?(token) : token == preshared_token
       end
 
       def build_preshared_token_security(options, api_instance)
         api_instance.before do
           token = Grape::Tokeeo.header_token(options, request)
-          error!(Grape::Tokeeo.message_for_missing_token(options), 401)  unless token.present?
-          error!( Grape::Tokeeo.message_for_invalid_token(options) , 401) unless verification_passed(options, token)
+          error!( Grape::Tokeeo.message_for_missing_token(options), 401) unless token.present?
+          error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless Grape::Tokeeo.verification_passed?(options, token)
         end
       end
 
@@ -81,17 +81,19 @@ module Grape
         supported
       end
 
-      def build_model_token_security(options, api_instance)
+      def found_in_model? (options, token)
         clazz = options[:in]
         field = options[:field]
 
         raise Error("#{clazz} does not use any of the orm library supported") unless Grape::Tokeeo.use_supported_orm?(clazz)
+        clazz.to_adapter.find_first("#{field.to_s}" => token)
+      end
 
+      def build_model_token_security(options, api_instance)
         api_instance.before do
           token = Grape::Tokeeo.header_token(options, request)
-          found = clazz.to_adapter.find_first("#{field.to_s}" => token)
           error!( Grape::Tokeeo.message_for_missing_token(options), 401) unless token.present?
-          error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless found.present?
+          error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless Grape::Tokeeo.found_in_model?(options, token)
         end
       end
 
