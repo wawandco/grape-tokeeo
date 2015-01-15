@@ -67,6 +67,14 @@ describe Grape::Tokeeo do
     end
   end
 
+  context "valid wrong model" do
+    it "should raise error" do
+      expect {
+        get "wrong_model/something", {}, {"X-Api-Token" => 'S0METHINGWEWANTTOSHAREONLYWITHCLIENT'}
+      }.to raise_error
+    end
+  end
+
   context "custom_error_message" do
     it "should return current message if X-Api-Token is not user-defined" do
       get 'preshared_with_message/something', {}, {"X-Api-Token" => 'AAB'}

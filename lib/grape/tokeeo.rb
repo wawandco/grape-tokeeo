@@ -12,7 +12,7 @@ module Grape
       end
 
       def ensure_token_with(options={}, &block)
-        Grape::Tokeeo.secure_with( self, options, &block)
+        Grape::Tokeeo.define_before_for(self, options, &block)
       end
 
       def validate_token(options={} )
@@ -59,13 +59,22 @@ module Grape
         token = Grape::Tokeeo.header_for( header_key, request )
       end
 
-      def build_preshared_token_security(options, api_instance)
+      def define_before_for(api_instance, options, &block)
         api_instance.before do
           token = Grape::Tokeeo.header_token(options, request)
-          error!(Grape::Tokeeo.message_for_missing_token(options), 401)  unless token.present?
-          preshared_token = options[:is]
-          verification_passed = preshared_token.is_a?(Array) ?  preshared_token.include?(token) : token == preshared_token
-          error!( Grape::Tokeeo.message_for_invalid_token(options) , 401) unless verification_passed
+          error!( Grape::Tokeeo.message_for_missing_token(options), 401) unless token.present?
+          error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless yield(token)
+        end
+      end
+
+      def verification_passed?( options, token)
+        preshared_token = options[:is]
+        preshared_token.is_a?(Array) ?  preshared_token.include?(token) : token == preshared_token
+      end
+
+      def build_preshared_token_security(options, api_instance)
+        define_before_for(api_instance, options) do |token|
+          Grape::Tokeeo.verification_passed?(options, token)
         end
       end
 
@@ -78,25 +87,17 @@ module Grape
         supported
       end
 
-      def build_model_token_security(options, api_instance)
+      def found_in_model? (options, token)
         clazz = options[:in]
         field = options[:field]
 
         raise Error("#{clazz} does not use any of the orm library supported") unless Grape::Tokeeo.use_supported_orm?(clazz)
-
-        api_instance.before do
-          token = Grape::Tokeeo.header_token(options, request)
-          found = clazz.to_adapter.find_first("#{field.to_s}" => token)
-          error!( Grape::Tokeeo.message_for_missing_token(options), 401) unless token.present?
-          error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless found.present?
-        end
+        clazz.to_adapter.find_first("#{field.to_s}" => token)
       end
 
-      def secure_with(api_instance, options, &block )
-        api_instance.before do
-          token = Grape::Tokeeo.header_token(options, request)
-          error!( Grape::Tokeeo.message_for_missing_token(options), 401) unless token.present?
-          error!( Grape::Tokeeo.message_for_invalid_token(options), 401) unless yield(token)
+      def build_model_token_security(options, api_instance)
+        define_before_for(api_instance, options) do |token|
+          Grape::Tokeeo.found_in_model?(options, token)
         end
       end
     end
