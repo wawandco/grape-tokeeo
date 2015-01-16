@@ -79,7 +79,7 @@ end
 
 Again this should ensure the token exist by looking on the SecureTokenHolder model table for a record with the column 'token' with the same value as 'X-Api-Token'.
 
-Starting from version 0.0.2.2 grape-tokeeo supports *ActiveRecord* , *MongoMapper* , *Mongoid* and *DataMapper* ORM libraries to handle this feature.
+Starting from version 0.0.3 grape-tokeeo supports *ActiveRecord* , *MongoMapper* , *Mongoid* and *DataMapper* ORM libraries to handle this feature.
 
 ### Token validated against a block passed
 
